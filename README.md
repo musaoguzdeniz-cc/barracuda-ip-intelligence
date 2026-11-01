@@ -73,7 +73,7 @@ $env:PYTHONPATH = "src"
 python -m ipintel.gui
 ```
 
-The analysis runs in a background thread so the window stays responsive. JSON and CSV reports can be saved from the interface.
+The dark console-style interface keeps the analysis responsive by running it in a background thread. Enter an IP address, select keyless and optional sources, then choose **ANALİZ ET**. The complete JSON result appears in the left panel; the right panel shows risk and provider evidence. Use **↓ JSON** or **↓ CSV** to save the report. When there is no provider evidence, the risk panel shows **KANIT YOK** instead of presenting a zero score as verified clean.
 
 ### Optional API providers
 
