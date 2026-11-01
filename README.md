@@ -35,7 +35,7 @@ Derleme sonunda `target\release\BarracudaIPIntelligence.exe` ve `target\release\
 .\target\release\ipintel.exe 8.8.8.8 --providers abuseipdb,virustotal
 ```
 
-Arayüzde IP adresini girin, kullanılacak kaynakları seçin ve **ANALİZ ET** düğmesine basın. Sol panel JSON sonucunu, sağ panel risk puanını ve kaynakları gösterir. Sağlayıcı kanıtı yoksa **KANIT YOK** görünür; bu sonuç IP'nin temiz olduğunu göstermez. **↓ JSON** ve **↓ CSV** raporu kaydeder.
+Arayüzde IP adresini girin, kullanılacak kaynakları seçin ve **ANALİZ ET** düğmesine basın. Sol panel IP profilinin özetini ve açılabilir tam JSON sonucunu, sağ panel risk puanını ve kaynakları gösterir. Sağlayıcı kanıtı yoksa **KANIT YOK** görünür; bu sonuç IP'nin temiz olduğunu göstermez. **↓ JSON** ve **↓ CSV** raporu kaydeder.
 
 ## API anahtarları
 

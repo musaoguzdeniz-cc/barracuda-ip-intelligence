@@ -76,7 +76,7 @@ impl BarracudaApp {
             shodan: true,
             greynoise: true,
             report: None,
-            output: "# HENÜZ ANALİZ YOK\n\nHedef IP adresini girin ve ANALİZ ET düğmesine basın.\nSonuç burada JSON olarak görüntülenecektir.".to_owned(),
+            output: "# HENÜZ ANALİZ YOK\n\nHedef IP adresini girin ve ANALİZ ET düğmesine basın.\nIP profili burada görüntülenecektir.".to_owned(),
             receiver: None,
             status: "HAZIR".to_owned(),
             status_color: ACCENT,
@@ -193,6 +193,49 @@ impl BarracudaApp {
                 }
             });
         });
+    }
+
+    fn profile_row(ui: &mut Ui, name: &str, value: String) {
+        ui.horizontal(|ui| {
+            ui.label(mono(name, 12.0, MUTED));
+            ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
+                ui.label(mono(value, 12.0, TEXT));
+            });
+        });
+        ui.separator();
+    }
+
+    fn profile_rows(ui: &mut Ui, report: &Value) {
+        let shown = |value: &Value| match value {
+            Value::Null => "-".to_owned(),
+            Value::String(text) if text.is_empty() => "-".to_owned(),
+            Value::String(text) => text.clone(),
+            _ => value.to_string(),
+        };
+        let network = &report["network"];
+        let geo = &report["geolocation"];
+        let asn = if network["asn"].is_null() {
+            &geo["asn"]
+        } else {
+            &network["asn"]
+        };
+        let country = if geo["country"].is_null() {
+            &report["rdap"]["country"]
+        } else {
+            &geo["country"]
+        };
+        for (name, value) in [
+            ("target", shown(&report["target"])),
+            ("ip_version", shown(&report["classification"]["type"])),
+            ("global", shown(&report["classification"]["is_global"])),
+            ("ptr", shown(&report["reverse_dns"]["hostname"])),
+            ("asn", shown(asn)),
+            ("prefix", shown(&network["prefix"])),
+            ("rir", shown(&network["rir"])),
+            ("country", shown(country)),
+        ] {
+            Self::profile_row(ui, name, value);
+        }
     }
 
     fn risk_panel(&mut self, ui: &mut Ui, height: f32) {
@@ -348,10 +391,21 @@ impl eframe::App for BarracudaApp {
                                 .auto_shrink([false, false])
                                 .max_height((body_height - 85.0).max(190.0))
                                 .show(ui, |ui| {
-                                    ui.add(
-                                        Label::new(mono(&self.output, 12.0, TEXT))
-                                            .wrap_mode(TextWrapMode::Extend),
-                                    );
+                                    if let Some(report) = &self.report {
+                                        Self::profile_rows(ui, report);
+                                        ui.add_space(13.0);
+                                        ui.collapsing(mono("TAM JSON", 11.0, ACCENT), |ui| {
+                                            ui.add(
+                                                Label::new(mono(&self.output, 12.0, TEXT))
+                                                    .wrap_mode(TextWrapMode::Extend),
+                                            );
+                                        });
+                                    } else {
+                                        ui.add(
+                                            Label::new(mono(&self.output, 12.0, TEXT))
+                                                .wrap_mode(TextWrapMode::Extend),
+                                        );
+                                    }
                                 });
                         });
                     },
